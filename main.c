@@ -162,9 +162,42 @@ void cadastrar(){
 
     }
 
+    return -1;
+ }
+
+ void mostra(int num_cpf){
+
+    int buscar;
+    printf("Digite o cpf a ser buscado: ");
+    scanf("%d", &buscar);
+    __fpurge(stdin);
+
+    int posicao = procurar(buscar);
+
+    if(posicao == -1){
+        printf("Pessoa não encontrada.");
+        pause();
+
+    } else {
+        system("clear");
+
+        rewind(ptr_pessoa);
+        fseek(ptr_pessoa, posicao * sizeof(Pessoa), SEEK_SET);
+        fread(&pessoais, sizeof(Pessoa),1, ptr_pessoa);
+
+        printf("------------\ Pessoa encontrada /------------\n\n\n");
+        printf("Nome: %s\n", pessoais->nome);
+        printf("Altura: %f\n", pessoais->altura);
+        printf("Peso: %f\n", pessoais->peso);
+        printf("Cpf: %d\n", pessoais->cpf);
+        printf("Sexo: %c\n", pessoais->sexo);
+
+    }
+
 
 
  }
+
 
 int menu(){
 
