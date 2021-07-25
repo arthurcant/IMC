@@ -2,91 +2,144 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-
-FILE ptr_pessoa;
-FILE ptr_tempo;
+#include <math.h>
+#include <time.h>
 
 int menu();
 void pause();
+void linha();
 void abrir_pessoa();
 void abrir_tempo();
+float tirandoImc(float peso, float altura);
 
 void cadastrar();
 int procurar(int num_cpf);
-void mostra(int num_cpf);
+void mostra();
+void listar();
 
 typedef struct {
     char nome[30];
     float altura;
     float peso;
     int cpf;
-    char sexo;
-}Pessoa;
+    //char sexo[10];
+    float imc;
+    char status[30];
 
-typedef struct {
     int dia;
     int mes;
     int ano;
-}Tempo;
+}Pessoa;
+
+typedef struct tempo {
+    int tm_sec; //representa os segundos de 0 a 59
+    int tm_min; //representa os minutos de 0 a 59
+    int tm_hour; //representa as horas de 0 a 24
+    int tm_mday; //dia do mês de 1 a 31
+    int tm_mon; //representa os meses do ano de 0 a 11
+    int tm_year; //representa o ano a partir de 1900
+    int tm_wday; //dia da semana de 0 (domingo) até 6 (sábado)
+    int tm_yday; // dia do ano de 1 a 365
+    int tm_isdst; //indica horário de verão se for diferente de zero
+}Temp;
 
     Pessoa pessoais;
-    Tempo temp;
+    Temp *data;
+
+    FILE *ptr_pessoa;
+    FILE *ptr_tempo;
+
 
 int main(){
-
+    int qq;
     int escolha;
 
+    time_t segundos;
+    time(&segundos);
+
+    data = localtime(&segundos);
+
+
+    abrir_pessoa();
     abrir_pessoa();
     abrir_tempo();
 
-
     escolha = menu();
 
-    switch(escolha){
+    do {
+         switch(escolha){
 
+            case 1:
+                 cadastrar();
+            break;
 
+            case 2:
+                mostra();
+            break;
 
-    case 1:
-         cadastrar();
-    break;
+            case 3:
+                listar();
+            break;
 
-    case 2:
+            case 4:
+                printf("Tem certeza que desejar apaga todos os dados ? (1-sim/ 0-não");
+                scanf("%d", &qq);
+                __fpurge(stdin);
 
-    break;
+                if(qq == 1){
+                    limpar();
+                }else {
+                    printf("\n\n Operação cancelada.");
+                    pause();
+                }
 
-    case 3:
+            break;
 
-    break;
+            case 0:
+                exit(1);
+            break;
 
-    case 0:
+            default:
+                printf("Opção invalida, tente novamente!");
+                pause();
+            break;
+        }
 
-    break;
+        escolha = menu();
 
-    default:
-        printf("")
-    break;
+    }while(escolha !=0);
 
-
-
-    }
+    fclose(ptr_pessoa);
 
  return 0;
 }
 
+float tirandoImc(float peso, float altura){
+
+    float imc;
+    imc = (peso/(altura * altura));
+
+    return imc;
+}
+
 void cadastrar(){
 
-    int resp;
+    int resp, dia = 0, mes = 0, ano = 0;
+    int verificar_resp;
 
+    //  char sexo[10];
 
 
     do {
 
-
-        printf("Digite o nome da pessoa: ");
-        scanf("%s", pessoais->nome);
+        printf("\n\n\nDigite o nome da pessoa: ");
+        scanf("%s", pessoais.nome);
         __fpurge(stdin);
 
         printf("\n\n");
+        printf("Digite o CPF: ");
+        scanf("%d", &pessoais.cpf);
+        __fpurge(stdin);
 
         printf("Digite a altura de %s: ", pessoais.nome);
         scanf("%f", &pessoais.altura);
@@ -94,52 +147,53 @@ void cadastrar(){
 
         printf("\n\n");
 
-        printf("Digite o peso de %s", pessoais.nome)
+        printf("Digite o peso de %s ", pessoais.nome);
         scanf("%f", &pessoais.peso);
         __fpurge(stdin);
 
         printf("\n\n");
-        printf("Digite o CPF: ");
-        scanf("%d", &pessoais.cpf)
-        __fpurge(stdin);
 
-        char sex;
+        pessoais.dia = data->tm_mday;
+        pessoais.mes = data->tm_mon;
+        pessoais.ano = data->tm_year+1900;
+/*
         printf("Digite o sexo: (M-masculino/F-feminino)\n");
-        scanf("%c", sex);
+        scanf("%s", &sexo);
         __fpurge(stdin);
 
-        if(islower(sex) == 0){
-            sex = toupper(sex);
-            pessoais.sexo = sex;
-        }else {
-            pessoais.sexo = sex;
-        }
+        strcpy(pessoais.sexo, sexo);
+*/
 
-        fseek(ptr_pessoa, sizeof(Pessoa), SEEK_END);
-        fwrite(&pessoais, sizeof(Pessoa),1, ptr_pessoa);
+        pessoais.imc = tirandoImc(pessoais.peso, pessoais.altura);
 
-        do{
-            system("clear");
-            int verificar_resp = 0;
-            printf("Desejar registrar outra pessoa: (1-Sim/0-Não)\n");
-            scanf("%d", &resp);
-            __fpurge(stdin);
 
-            if(resp == 0 || resp == 1){
-                verificar_resp = 1;
+    if(pessoais.imc < 18.5){
+        char mensagens[] = "abaixo do peso.";
+        strcpy(pessoais.status, mensagens);
+    }else if(pessoais.imc >= 18.5 && pessoais.imc < 24.9){
+       char mensagens[] = "Peso normal";
+        strcpy(pessoais.status, mensagens);
+    }else if(pessoais.imc >= 24.9 && pessoais.imc < 29.9){
+        char mensagens[] = "Sobrepeso";
+        strcpy(pessoais.status, mensagens);
+    }else if(pessoais.imc >= 29.9 && pessoais.imc < 34.9){
+        char mensagens[] = "Obesidade grau 1";
+        strcpy(pessoais.status, mensagens);
+    }else if(pessoais.imc >= 34.9 && pessoais.imc < 39.9){
+        char mensagens[] = "Obesidade grau 2";
+        strcpy(pessoais.status, mensagens);
+    }else if (pessoais.imc >= 39.9){
+        char mensagens[] = "Obesidade grau 3";
+        strcpy(pessoais.status, mensagens);
+    }
 
-            }else {
+        fseek(ptr_pessoa, 0, SEEK_END);
 
-                verificar_resp = 0;
-                printf("\n\n\nVocê digitou uma opção invalida.\nTente novamente!");
-                pause();
+        fwrite(&pessoais, sizeof(Pessoa), 1, ptr_pessoa);
 
-            }
+    }while(resp == 0);
 
-        }while(verificar_resp == 0);
-
-    }while(resp != 1);
-
+    pause();
 }
 
  int procurar(int num_cpf) {
@@ -165,7 +219,7 @@ void cadastrar(){
     return -1;
  }
 
- void mostra(int num_cpf){
+ void mostra(){
 
     int buscar;
     printf("Digite o cpf a ser buscado: ");
@@ -183,29 +237,63 @@ void cadastrar(){
 
         rewind(ptr_pessoa);
         fseek(ptr_pessoa, posicao * sizeof(Pessoa), SEEK_SET);
-        fread(&pessoais, sizeof(Pessoa),1, ptr_pessoa);
+        fread(&pessoais, sizeof(Pessoa), 1, ptr_pessoa);
 
         printf("------------\ Pessoa encontrada /------------\n\n\n");
-        printf("Nome: %s\n", pessoais->nome);
-        printf("Altura: %f\n", pessoais->altura);
-        printf("Peso: %f\n", pessoais->peso);
-        printf("Cpf: %d\n", pessoais->cpf);
-        printf("Sexo: %c\n", pessoais->sexo);
-
+        printf("Nome: %s.\n", pessoais.nome);
+        printf("Altura: %.2f.\n", pessoais.altura);
+        printf("Peso: %.2f.\n", pessoais.peso);
+        printf("Cpf: %d.\n", pessoais.cpf);
+        //printf("Sexo: %c.\n", pessoais.sexo);
+        printf("\n");
+        printf("Imc: %.2f.", pessoais.imc);
+        printf("Status: %s.", pessoais.status);
+        printf(" Data: %.2d/%.2d/%d ", pessoais.dia, pessoais.mes, pessoais.ano);
     }
-
-
-
+    pause();
  }
 
+void listar(){
+
+    system("clear");
+
+    rewind(ptr_pessoa);
+    fread(&pessoais, sizeof(Pessoa), 1, ptr_pessoa);
+
+    printf("----------------\\ Lista De Pessoas /----------------\n\n");
+
+    while(feof(ptr_pessoa) == 0){
+        linha();
+        printf("\n\n");
+        printf("Nome: %s.\n", pessoais.nome);
+        printf("Altura: %.2f.\n", pessoais.altura);
+        printf("Peso: %.2f.\n", pessoais.peso);
+        printf("Cpf: %d.\n", pessoais.cpf);
+        //printf("Sexo: %c.\n", pessoais.sexo);
+        printf("\n");
+        printf("Imc: %.2f.", pessoais.imc);
+        printf("Status: %s.", pessoais.status);
+        printf(" Data: %.2d/%.2d/%d ", pessoais.dia, pessoais.mes, pessoais.ano);
+
+        printf("\n\n");
+        linha();
+        printf("\n\n");
+
+        fread(&pessoais, sizeof(Pessoa), 1, ptr_pessoa);
+    }
+
+    pause();
+}
 
 int menu(){
+    system("clear");
 
     int num;
-    printf("---------------\ Menu do MMC /---------------\n\n\n");
+    printf("---------------\\ Menu do MMC /---------------\n\n\n");
     printf("1) Cadastrar pessoa.\n");
     printf("2) Consulta por cpf. \n");
     printf("3) Listar todas as pessoas cadastradas.\n");
+    printf("4) Excluir todos os dados.\n");
     printf("0) Sair do programa.\n\n\n");
 
     printf("Digite a opção que você desejar: ");
@@ -216,22 +304,33 @@ int menu(){
 }
 
 void abrir_pessoa() {
+     ptr_pessoa = fopen("pessoais.dat", "r+b");
 
-    if( ptr_pessoa != NULL){
+    if( ptr_pessoa == NULL){
         ptr_pessoa = fopen("pessoais.dat", "w+b");
-    }else {
-        ptr_pessoa = fopen("pessoais.dat", "r+b");
     }
-
 }
 
 void abrir_tempo() {
 
-    if(ptr_tempo != NULL){
+    ptr_tempo = fopen("tempo.dat", "r+b");
+
+    if(ptr_tempo == NULL){
         ptr_tempo = fopen("tempo.dat", "w+b");
-    } else {
-        ptr_tempo = fopen("tempo.dat", "r+b");
     }
+
+}
+
+void linha() {
+    for(int i = 0; i < 20; i++){
+        printf("-");
+    }
+    printf("\n\n\n");
+}
+
+void limpar(){
+
+    ptr_pessoa = fopen("pessoais.dat", "w+b");
 
 
 }

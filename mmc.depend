@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1613580246 source:/home/arthurcant/Documents/projetinhos/mmc/main.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<string.h>
+	<math.h>
+
+1627227667 source:/home/arthur/Documents/projetinhos/mmc/main.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<string.h>
+	<math.h>
+
