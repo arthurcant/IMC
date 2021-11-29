@@ -47,8 +47,6 @@ typedef struct tempo {
     Temp *data;
 
     FILE *ptr_pessoa;
-    FILE *ptr_tempo;
-
 
 int main(){
     int qq;
