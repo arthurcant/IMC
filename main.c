@@ -287,7 +287,7 @@ int menu(){
     system("clear");
 
     int num;
-    printf("---------------\\ Menu do MMC /---------------\n\n\n");
+    printf("---------------\\ Menu do IMC /---------------\n\n\n");
     printf("1) Cadastrar pessoa.\n");
     printf("2) Consulta por cpf. \n");
     printf("3) Listar todas as pessoas cadastradas.\n");
