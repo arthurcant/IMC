@@ -45,7 +45,7 @@ typedef struct tempo {
 
     Pessoa pessoais;
     Temp *data;
-
+    FILE *ptr_tempo;
     FILE *ptr_pessoa;
 
 int main(){
@@ -80,7 +80,7 @@ int main(){
             break;
 
             case 4:
-                printf("Tem certeza que desejar apaga todos os dados ? (1-sim/ 0-não");
+                printf("Tem certeza que desejar apaga todos os dados ? (1-sim/ 0-não) \n");
                 scanf("%d", &qq);
                 __fpurge(stdin);
 
@@ -135,10 +135,12 @@ void cadastrar(){
         __fpurge(stdin);
 
         printf("\n\n");
+
         printf("Digite o CPF: ");
         scanf("%d", &pessoais.cpf);
         __fpurge(stdin);
 
+        printf("\n\n");
         printf("Digite a altura de %s: ", pessoais.nome);
         scanf("%f", &pessoais.altura);
         __fpurge(stdin);

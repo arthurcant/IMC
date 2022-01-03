@@ -13,3 +13,11 @@
 	<string.h>
 	<math.h>
 
+1641222253 source:/home/arthur/Documents/Desktop/IMC/main.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<string.h>
+	<math.h>
+	<time.h>
+
